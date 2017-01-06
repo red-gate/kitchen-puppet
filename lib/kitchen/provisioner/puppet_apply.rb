@@ -243,8 +243,8 @@ module Kitchen
               wget $MsiUrl -UseBasicParsing -OutFile "C:/puppet.msi" #{posh_proxy_parm}
               $process = Start-Process -FilePath msiexec.exe -Wait -PassThru -ArgumentList '/qn', '/norestart', '/i', 'C:\\puppet.msi'
               if ($process.ExitCode -ne 0) {
-                  Write-Host "Installer failed."
-                  Exit 1
+                  Write-Host "Installer failed with exit code $($process.ExitCode)"
+                  Exit $process.ExitCode
               }
 
               #{install_busser}
@@ -336,8 +336,8 @@ module Kitchen
             wget $MsiUrl -UseBasicParsing -OutFile "C:/puppet-agent.msi" #{posh_proxy_parm}
             $process = Start-Process -FilePath msiexec.exe -Wait -PassThru -ArgumentList '/qn', '/norestart', '/i', 'C:\\puppet-agent.msi'
             if ($process.ExitCode -ne 0) {
-                Write-Host "Installer failed."
-                Exit 1
+                Write-Host "Installer failed with exit code $($process.ExitCode)"
+                Exit $process.ExitCode
             }
 
             #{install_busser}
