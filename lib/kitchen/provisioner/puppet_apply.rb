@@ -338,7 +338,7 @@ module Kitchen
           info("Installing Puppet Collections on #{puppet_platform}")
           info('Powershell is not recognised by core test-kitchen assuming it is present') unless powershell_shell?
           <<-INSTALL
-            if(Get-Command puppet -ErrorAction 0) { return; }
+            if((Get-Command puppet -ErrorAction 0) -and (Test-Path C:/puppet-agent.msi)) { return; }
             $ProgressPreference = 'SilentlyContinue' # to speed up Invoke-WebRequest
             Invoke-WebRequest "#{puppet_windows_url}" -UseBasicParsing -OutFile "C:/puppet-agent.msi" #{posh_proxy_parm}
             $process = Start-Process -FilePath msiexec.exe -Wait -PassThru -ArgumentList '/qn', '/norestart', '/i', 'C:\\puppet-agent.msi'
