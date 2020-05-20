@@ -346,7 +346,7 @@ module Kitchen
             # so add an additional Wait-Process to make sure the install is finished before we continue
             Wait-Process -InputObject $process
             if ($process.ExitCode -ne 0) {
-                Write-Host "Installer failed."
+                Write-Host "Installer failed with exit code '$($process.ExitCode)'"
                 Exit 1
             }
 
