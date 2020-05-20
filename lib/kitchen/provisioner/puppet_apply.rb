@@ -342,12 +342,17 @@ module Kitchen
             $ProgressPreference = 'SilentlyContinue' # to speed up Invoke-WebRequest
             Invoke-WebRequest "#{puppet_windows_url}" -UseBasicParsing -OutFile "C:/puppet-agent.msi" #{posh_proxy_parm}
             $process = Start-Process -FilePath msiexec.exe -Wait -PassThru -ArgumentList '/qn', '/norestart', '/i', 'C:\\puppet-agent.msi'
-            # We've seen issues with "Start-Process -Wait" exiting too early on ancient versions of Windows
-            # so add an additional Wait-Process to make sure the install is finished before we continue
-            Wait-Process -InputObject $process
+
+            if($process.ExitCode -eq $null) {
+              # We've seen issues with "Start-Process -Wait" exiting too early on ancient versions of Windows
+              # so add an additional Wait-Process to make sure the install is finished before we continue
+              Wait-Process -InputObject $process
+              Exit 0 # no way to check for success. Hope for the best...
+            }
+
             if ($process.ExitCode -ne 0) {
-                Write-Host "Installer failed with exit code '$($process.ExitCode)'"
-                Exit 1
+              Write-Host "Installer failed with exit code '$($process.ExitCode)'"
+              Exit 1
             }
 
             #{install_busser}
